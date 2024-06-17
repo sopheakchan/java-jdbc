@@ -2,14 +2,56 @@ import model.dao.CustomerDaoImpl;
 import model.dao.OrderDaoImpl;
 import model.entity.Customer;
 import model.entity.Order;
+import model.entity.Product;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        new OrderDaoImpl()
-                .updateOrderById(1);
+//        In case we make a product order more than one, try to loop it
+        List<Integer> productId = new ArrayList<>(List.of(1,2));
+        for (Integer i: productId){
+            new OrderDaoImpl()
+                    .addNewOrder(Order.builder()
+                            .id(1)
+                            .orderName("Green tea")
+                            .orderDescription("Tasty")
+                            .orderAt(Date.valueOf(LocalDate.now()))
+                            .customer(Customer.builder()
+                                    .id(4)
+                                    .build())
+                            .productList(new ArrayList<>(
+                                    List.of(Product.builder()
+                                            .id(i)
+                                            .build())
+                            ))
+                            .build());
+
+        }
+
+//      #Insert order linked with product id
+//        new OrderDaoImpl()
+//                .addNewOrder(Order.builder()
+//                        .id(1)
+//                        .orderName("Green tea")
+//                        .orderDescription("Tasty")
+//                        .orderAt(Date.valueOf(LocalDate.now()))
+//                        .customer(Customer.builder()
+//                                .id(4)
+//                                .build())
+//                        .productList(new ArrayList<>(
+//                                List.of(Product.builder()
+//                                                .id(2)
+//                                        .build())
+//                        ))
+//                        .build());
+
+//      #For Update
+//        new OrderDaoImpl()
+//                .updateOrderById(1);
 
 //        #Delete an order
 //        new OrderDaoImpl()

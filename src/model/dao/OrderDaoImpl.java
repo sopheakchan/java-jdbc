@@ -2,6 +2,7 @@ package model.dao;
 
 import model.entity.Customer;
 import model.entity.Order;
+import model.entity.Product;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,6 +17,10 @@ public class OrderDaoImpl implements OrderDao{
                 INSERT INTO "order" (order_name, order_description, cus_id, ordered_at)
                 VALUES (?,?,?,?)
                 """;
+        String sql1 = """
+                INSERT INTO "product_order"
+                VALUES (?,?)
+                """;
         try (
                 Connection connection = DriverManager.getConnection(
                         "jdbc:postgresql://localhost:5432/food_panda_db",
@@ -23,15 +28,31 @@ public class OrderDaoImpl implements OrderDao{
                         "Pisey0107"
                 );
                 PreparedStatement preparedStatement
-                        = connection.prepareStatement(sql)
+                        = connection.prepareStatement(sql);
+                PreparedStatement preparedStatement1
+                        = connection.prepareStatement(sql1);
+
+                Statement statement
+                        = connection.createStatement();
                 ) {
             preparedStatement.setString(1,order.getOrderName());
             preparedStatement.setString(2, order.getOrderDescription());
             preparedStatement.setInt(3,order.getCustomer().getId());
             preparedStatement.setDate(4,order.getOrderAt());
             int rowAffected = preparedStatement.executeUpdate();
-            String message = rowAffected>0? "Insert successfully" : "Insert failed";
+            String message = rowAffected>0? "Insert Order successfully" : "Insert Order failed";
             System.out.println(message);
+//            product order
+            for (Product product: order.getProductList()){
+                preparedStatement1.setInt(1,product.getId());
+                preparedStatement1.setInt(2,order.getId());
+            }
+            int rowAffected1 = preparedStatement1.executeUpdate();
+            if (rowAffected1>0){
+                System.out.println("Product has been ordered");
+            }else {
+                System.out.println("Product out of stock");
+            }
 
         }catch (SQLException sqlException){
             System.out.println(sqlException.getMessage());
